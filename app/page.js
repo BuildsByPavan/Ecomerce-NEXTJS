@@ -2,9 +2,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import HomeSection from "./components/autoSlider";
-import { useCartStore } from "./store/useCartstore";
+import { useCartStore } from "../store/useCartstore";
 import { useRouter } from "next/navigation";
-import { useFilterStore } from "./store/useFilterStore";
+import { useFilterStore } from "../store/useFilterStore";
 import { toast } from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 
@@ -27,7 +27,9 @@ export default function Home() {
   const { selectedCategory, setSelectedCategory, searchQuery } = useFilterStore();
 
   const sliderRefs = useRef({});
+  const [highlightedCategory, setHighlightedCategory] = useState(null);
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -42,11 +44,12 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  // Fetch cart
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
 
-
+  // Add to cart
   const handleAddToCart = async (productId, e) => {
     e.stopPropagation();
     try {
@@ -58,6 +61,7 @@ export default function Home() {
     }
   };
 
+  // Highlight search matches in product title
   const highlightText = (text) => {
     if (!searchQuery) return text;
     const regex = new RegExp(`(${searchQuery})`, "gi");
@@ -73,10 +77,38 @@ export default function Home() {
     );
   };
 
+  // Auto-scroll and highlight when searchQuery changes
+  useEffect(() => {
+    if (!searchQuery) return;
+
+    const matchedCategory = categories.find((category) => {
+      return products.some((p) => {
+        const matchCategory =
+          category === "All Products" ||
+          p.category?.toLowerCase() === category.toLowerCase();
+        const matchSearch =
+          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchCategory && matchSearch;
+      });
+    });
+
+    if (matchedCategory && sliderRefs.current[matchedCategory]) {
+      const element = sliderRefs.current[matchedCategory];
+      const offset = 120;
+      const top = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+
+      setHighlightedCategory(matchedCategory);
+      setTimeout(() => setHighlightedCategory(null), 1500);
+    }
+  }, [searchQuery, products]);
+
+  // Handle category click from HomeSection
   const handleCategoryClick = (category) => {
     if (sliderRefs.current[category]) {
       const element = sliderRefs.current[category];
-      const offset = 100; 
+      const offset = 100;
       const top = element.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: "smooth" });
     }
@@ -87,7 +119,6 @@ export default function Home() {
       id="products-section"
       className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-4 space-y-16"
     >
-
       <HomeSection
         onCategoryClick={handleCategoryClick}
         selectedCategory={selectedCategory}
@@ -113,6 +144,7 @@ export default function Home() {
             router={router}
             handleAddToCart={handleAddToCart}
             highlightText={highlightText}
+            isHighlighted={highlightedCategory === category}
             ref={(el) => (sliderRefs.current[category] = el)}
           />
         );
@@ -121,8 +153,9 @@ export default function Home() {
   );
 }
 
+// CategorySlider component
 const CategorySlider = React.forwardRef(
-  ({ category, products, router, handleAddToCart, highlightText }, ref) => {
+  ({ category, products, router, handleAddToCart, highlightText, isHighlighted }, ref) => {
     const sliderRef = useRef(null);
     const [loading, setLoading] = useState(false);
 
@@ -143,8 +176,12 @@ const CategorySlider = React.forwardRef(
     };
 
     return (
-      <div ref={ref} className="space-y-3">
-
+      <div
+        ref={ref}
+        className={`space-y-3 transition-all duration-500 ${
+          isHighlighted ? "bg-yellow-100 shadow-lg rounded-2xl scale-[1.02]" : ""
+        }`}
+      >
         <h2 className="text-2xl font-bold mb-2">{category}</h2>
 
         <div className="relative">
