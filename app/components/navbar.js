@@ -32,9 +32,7 @@ export default function Navbar() {
   // Scroll to products section helper
   const scrollToProducts = () => {
     const section = document.getElementById("products-section");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
+    if (section) section.scrollIntoView({ behavior: "smooth" });
   };
 
   // 🔍 Trigger search automatically when typing
@@ -59,41 +57,25 @@ export default function Navbar() {
 
   useEffect(() => {
     if (user?.profilePic) {
-      if (user.profilePic.startsWith("data:image")) {
-        setProfilePic(user.profilePic);
-      } else if (user.profilePic.startsWith("http")) {
-        setProfilePic(user.profilePic);
-      } else {
-        setProfilePic(`data:image/jpeg;base64,${user.profilePic}`);
-      }
+      if (user.profilePic.startsWith("data:image")) setProfilePic(user.profilePic);
+      else if (user.profilePic.startsWith("http")) setProfilePic(user.profilePic);
+      else setProfilePic(`data:image/jpeg;base64,${user.profilePic}`);
     } else {
       const storedUser = JSON.parse(localStorage.getItem("user"));
       if (storedUser?.profilePic) {
-        if (storedUser.profilePic.startsWith("data:image")) {
-          setProfilePic(storedUser.profilePic);
-        } else if (storedUser.profilePic.startsWith("http")) {
-          setProfilePic(storedUser.profilePic);
-        } else {
-          setProfilePic(`data:image/jpeg;base64,${storedUser.profilePic}`);
-        }
-      } else {
-        setProfilePic("/default-avatar.jpg");
-      }
+        if (storedUser.profilePic.startsWith("data:image")) setProfilePic(storedUser.profilePic);
+        else if (storedUser.profilePic.startsWith("http")) setProfilePic(storedUser.profilePic);
+        else setProfilePic(`data:image/jpeg;base64,${storedUser.profilePic}`);
+      } else setProfilePic("/default-avatar.jpg");
     }
 
     const handleUserUpdate = () => {
       const updatedUser = JSON.parse(localStorage.getItem("user"));
       if (updatedUser?.profilePic) {
-        if (updatedUser.profilePic.startsWith("data:image")) {
-          setProfilePic(updatedUser.profilePic);
-        } else if (updatedUser.profilePic.startsWith("http")) {
-          setProfilePic(updatedUser.profilePic);
-        } else {
-          setProfilePic(`data:image/jpeg;base64,${updatedUser.profilePic}`);
-        }
-      } else {
-        setProfilePic("/default-avatar.jpg");
-      }
+        if (updatedUser.profilePic.startsWith("data:image")) setProfilePic(updatedUser.profilePic);
+        else if (updatedUser.profilePic.startsWith("http")) setProfilePic(updatedUser.profilePic);
+        else setProfilePic(`data:image/jpeg;base64,${updatedUser.profilePic}`);
+      } else setProfilePic("/default-avatar.jpg");
     };
 
     window.addEventListener("userUpdated", handleUserUpdate);
@@ -127,7 +109,7 @@ export default function Navbar() {
             Exclusive
           </button>
 
-
+          {/* Desktop search */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center border border-gray-300 rounded-full overflow-hidden w-full max-w-md shadow-sm">
               <AiOutlineSearch className="ml-3 text-gray-500" size={20} />
@@ -142,6 +124,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Mobile search toggle */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="md:hidden p-2 rounded-md hover:bg-gray-100 transition"
@@ -184,28 +167,20 @@ export default function Navbar() {
             </button>
           </div>
 
+          {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-6 text-gray-700">
             {!user ? (
               <>
-                <Link
-                  href="/login"
-                  className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer"
-                >
+                <Link href="/login" className="flex items-center gap-1 hover:text-blue-600 transition">
                   <FiLogIn size={18} /> Login
                 </Link>
-                <Link
-                  href="/register"
-                  className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer"
-                >
+                <Link href="/register" className="flex items-center gap-1 hover:text-blue-600 transition">
                   <FiUserPlus size={18} /> Register
                 </Link>
               </>
             ) : (
               <>
-                <Link
-                  href="/orders"
-                  className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer"
-                >
+                <Link href="/orders" className="flex items-center gap-1 hover:text-blue-600 transition">
                   <RiHistoryLine size={18} /> Orders
                 </Link>
                 <button
@@ -219,19 +194,17 @@ export default function Navbar() {
                 >
                   <FiLogOut size={18} /> Logout
                 </button>
+                {isAdmin && (
+                  <Link href="/admin" className="flex items-center gap-1 hover:text-blue-600 transition">
+                    <MdDashboard size={18} /> Admin
+                  </Link>
+                )}
               </>
-            )}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer"
-              >
-                <MdDashboard size={18} /> Admin
-              </Link>
             )}
           </div>
         </div>
 
+        {/* Mobile search input */}
         {isSearchOpen && (
           <div className="md:hidden mt-2 px-2 pb-3 space-y-1">
             <input
@@ -249,25 +222,16 @@ export default function Navbar() {
           <div className="md:hidden mt-2 px-2 pb-3 space-y-1 bg-white border-t border-gray-200">
             {!user ? (
               <>
-                <Link
-                  href="/login"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                >
+                <Link href="/login" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                   <FiLogIn size={18} /> Login
                 </Link>
-                <Link
-                  href="/register"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                >
+                <Link href="/register" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                   <FiUserPlus size={18} /> Register
                 </Link>
               </>
             ) : (
               <>
-                <Link
-                  href="/orders"
-                  className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                >
+                <Link href="/orders" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                   <RiHistoryLine size={18} /> Orders
                 </Link>
                 <button
@@ -282,10 +246,7 @@ export default function Navbar() {
                   <FiLogOut size={18} /> Logout
                 </button>
                 {isAdmin && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                  >
+                  <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                     <MdDashboard size={18} /> Admin
                   </Link>
                 )}
