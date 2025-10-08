@@ -29,16 +29,20 @@ export default function Navbar() {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setSearchQuery(tempSearch);
-
+  // Scroll to products section helper
+  const scrollToProducts = () => {
     const section = document.getElementById("products-section");
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     }
+  };
 
-    setIsSearchOpen(false);
+  // 🔍 Trigger search automatically when typing
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTempSearch(value);
+    setSearchQuery(value);
+    scrollToProducts();
   };
 
   const handleHomeClick = (e) => {
@@ -123,26 +127,19 @@ export default function Navbar() {
             Exclusive
           </button>
 
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 justify-center"
-          >
+
+          <div className="hidden md:flex flex-1 justify-center">
             <div className="flex items-center border border-gray-300 rounded-full overflow-hidden w-full max-w-md shadow-sm">
+              <AiOutlineSearch className="ml-3 text-gray-500" size={20} />
               <input
                 type="text"
                 placeholder="Search products..."
-                className="flex-grow px-4 py-2 outline-none text-gray-700"
+                className="flex-grow px-3 py-2 outline-none text-gray-700"
                 value={tempSearch}
-                onChange={(e) => setTempSearch(e.target.value)}
+                onChange={handleInputChange}
               />
-              <button
-                type="submit"
-                className="px-4 py-2 text-gray-600 hover:text-white cursor-pointer hover:bg-blue-600 transition rounded-full"
-              >
-                <AiOutlineSearch size={20} />
-              </button>
             </div>
-          </form>
+          </div>
 
           <div className="flex items-center gap-3">
             <button
@@ -235,6 +232,19 @@ export default function Navbar() {
           </div>
         </div>
 
+        {isSearchOpen && (
+          <div className="md:hidden mt-2 px-2 pb-3 space-y-1">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={tempSearch}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            />
+          </div>
+        )}
+
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-2 px-2 pb-3 space-y-1 bg-white border-t border-gray-200">
             {!user ? (
@@ -282,27 +292,6 @@ export default function Navbar() {
               </>
             )}
           </div>
-        )}
-
-        {isSearchOpen && (
-          <form
-            onSubmit={handleSearch}
-            className="md:hidden mt-2 px-2 pb-3 space-y-1"
-          >
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={tempSearch}
-              onChange={(e) => setTempSearch(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="w-full mt-1 cursor-pointer bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-            >
-              Search
-            </button>
-          </form>
         )}
       </div>
     </nav>
