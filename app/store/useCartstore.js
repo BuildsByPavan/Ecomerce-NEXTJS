@@ -13,7 +13,6 @@ export const useCartStore = create((set, get) => ({
       const res = await fetch("/api/cart", { credentials: "include" });
 
       if (res.status === 401) {
-        // Guest cart logic
         const guestCart = getGuestCart();
         if (guestCart.length === 0) {
           set({ cartItems: [], loading: false });
@@ -36,7 +35,6 @@ export const useCartStore = create((set, get) => ({
       set({ cartItems: data || [], loading: false });
     } catch (err) {
       console.error("Failed to fetch cart:", err);
-      toast.error("Failed to fetch cart");
       set({ loading: false });
     }
   },
@@ -63,7 +61,6 @@ export const useCartStore = create((set, get) => ({
       }
 
       await get().fetchCart();
-      toast.success("Product added to cart!");
       set({ loading: false });
     } catch (err) {
       console.error("Add to cart failed:", err);
@@ -148,7 +145,6 @@ export const useCartStore = create((set, get) => ({
       if (res.ok) {
         localStorage.removeItem("guestCart");
         await get().fetchCart();
-        setTimeout(() => toast.success("Cart merged successfully!"), 100);
         set({ loading: false });
         return true;
       }
