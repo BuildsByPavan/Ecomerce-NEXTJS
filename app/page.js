@@ -147,7 +147,7 @@ const CategorySlider = React.forwardRef(
     const scroll = (dir) => {
       if (!sliderRef.current) return;
       sliderRef.current.scrollBy({
-        left: dir === "left" ? -window.innerWidth * 0.6 : window.innerWidth * 0.6,
+        left: dir === "left" ? -400 : 400,
         behavior: "smooth",
       });
     };
@@ -193,10 +193,10 @@ const CategorySlider = React.forwardRef(
               ? skeletonArray.map((_, i) => (
                   <div
                     key={i}
-                    className="min-w-[180px] sm:min-w-[200px] md:min-w-[220px] lg:min-w-[240px] h-64 sm:h-72 md:h-80 lg:h-80 bg-gray-200 rounded-2xl flex flex-col p-3 relative overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                    className="w-[220px] h-48 bg-gray-200 rounded-2xl flex flex-col p-3 relative overflow-hidden cursor-pointer hover:scale-105 transition-transform"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
-                    <div className="w-full h-40 sm:h-44 md:h-48 lg:h-52 bg-gray-300 rounded-md mb-2 relative z-10"></div>
+                    <div className="w-full h-36 bg-gray-300 rounded-md mb-2 relative z-10"></div>
                     <div className="h-4 bg-gray-300 rounded mb-1 w-3/4 relative z-10"></div>
                     <div className="h-3 bg-gray-300 rounded mb-1 w-1/2 relative z-10"></div>
                     <div className="h-4 bg-gray-300 rounded w-1/4 mt-2 relative z-10"></div>
@@ -204,7 +204,7 @@ const CategorySlider = React.forwardRef(
                 ))
               : products.length === 0
               ? (
-                <div className="min-w-[220px] h-64 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
+                <div className="min-w-[220px] h-48 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
                   No products found
                 </div>
               )
@@ -212,9 +212,9 @@ const CategorySlider = React.forwardRef(
                   <div
                     key={p._id}
                     onClick={() => router.push(`/products/${p._id}`)}
-                    className="min-w-[180px] sm:min-w-[200px] md:min-w-[220px] lg:min-w-[240px] bg-white rounded-2xl border border-gray-200 flex-shrink-0 flex flex-col items-center p-3 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
+                    className="w-[220px] h-48 bg-white rounded-2xl border border-gray-200 flex-shrink-0 flex flex-col items-center p-3 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
                   >
-                    <div className="relative w-full h-40 sm:h-44 md:h-48 lg:h-52 mb-2">
+                    <div className="relative w-full h-36 mb-2">
                       <Image
                         src={p.image || "/placeholder.png"}
                         alt={p.title}
@@ -222,18 +222,18 @@ const CategorySlider = React.forwardRef(
                         className="object-contain rounded-md"
                       />
                     </div>
-                    <h2 className="font-semibold text-center text-sm sm:text-base line-clamp-1">
+                    <h2 className="font-semibold text-center text-sm line-clamp-1">
                       {highlightText(p.title)}
                     </h2>
-                    <p className="text-xs sm:text-sm text-gray-500 text-center line-clamp-1">
+                    <p className="text-xs text-gray-500 text-center line-clamp-1">
                       {p.category}
                     </p>
-                    <p className="text-blue-600 font-semibold mt-1 text-sm sm:text-base">
+                    <p className="text-blue-600 font-semibold mt-1 text-sm">
                       ₹{p.price}
                     </p>
                     <button
                       onClick={(e) => handleAddToCart(p._id, e)}
-                      className="mt-2 cursor-pointer bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 active:scale-95 transition-all text-xs sm:text-sm"
+                      className="mt-2 cursor-pointer bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 active:scale-95 transition-all text-xs"
                     >
                       Add to Cart
                     </button>
@@ -255,11 +255,7 @@ const CategorySlider = React.forwardRef(
               onClick={handleViewAll}
               className="flex items-center justify-center gap-2 bg-red-500 cursor-pointer text-white font-medium px-8 py-3 rounded-md hover:bg-red-700 active:scale-95 transition-all shadow-sm relative overflow-hidden"
             >
-              {viewAllLoading ? (
-                <ClipLoader size={20} color="#fff" />
-              ) : (
-                "View All Products"
-              )}
+              {viewAllLoading ? <ClipLoader size={20} color="#fff" /> : "View All Products"}
               {viewAllLoading && (
                 <div className="absolute inset-0 bg-gradient-to-r from-red-400 via-red-500 to-red-400 opacity-30 animate-shimmer"></div>
               )}
