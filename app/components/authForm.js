@@ -121,11 +121,12 @@ export default function AuthForm({ type = "login" }) {
           onSubmit={handleSubmit}
           className="w-full max-w-md p-8 bg-white shadow-md rounded-xl"
         >
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-900">
-            {type === "login" ? "Login to Exclusive" : "Create an Account"}
+          <h2 className=" text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-gray-900 whitespace-nowrap tracking-tight" >
+           {type === "login" ? "Exclusive" : "Create an Account"}
           </h2>
 
-          <div className="space-y-4">
+    
+            <div className="space-y-4">
             {type === "register" && (
               <InputField
                 label="Username"
