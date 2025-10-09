@@ -29,13 +29,12 @@ export default function Navbar() {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Scroll to products section helper
   const scrollToProducts = () => {
     const section = document.getElementById("products-section");
     if (section) section.scrollIntoView({ behavior: "smooth" });
   };
 
-  // 🔍 Trigger search automatically when typing
+ 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setTempSearch(value);
@@ -47,12 +46,7 @@ export default function Navbar() {
     e.preventDefault();
     setSearchQuery("");
     setTempSearch("");
-
-    if (pathname === "/") {
-      const section = document.getElementById("products-section");
-      if (section) section.scrollIntoView({ behavior: "smooth" });
-      else window.scrollTo({ top: 0, behavior: "smooth" });
-    } else router.push("/");
+    router.push("/");
   };
 
   useEffect(() => {
