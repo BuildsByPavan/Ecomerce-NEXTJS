@@ -228,15 +228,20 @@ export default function Navbar() {
                 <Link href="/orders" className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer">
                   <RiHistoryLine size={18} /> Orders
                 </Link>
-                <button
-                  onClick={async () => {
-                    await signOut({ callbackUrl: "/" });
-                    fetchCart();
-                    update();
-                    toast.success("Logged out successfully!");
+                <button onClick={async () => { try {
+                                localStorage.removeItem("user");
+                                localStorage.removeItem("cart");
+                                localStorage.removeItem("token");
+                                await signOut({ callbackUrl: "/" });
+                                fetchCart();
+                                update();
+                  toast.success("Logged out successfully!", { duration: 3000 });
+                  } catch (error) {
+                   console.error("Logout error:", error);
+                   toast.error("Something went wrong during logout.", { duration: 3000 });
+                  }
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100"
-                >
+             className="flex w-full items-center gap-2 px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100" >
                   <FiLogOut size={18} /> Logout
                 </button>
                 {isAdmin && (
