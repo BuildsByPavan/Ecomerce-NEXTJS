@@ -204,7 +204,7 @@ const CategorySlider = React.forwardRef(
                 ))
               : products.length === 0
               ? (
-                <div className="min-w-[220px] h-48 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
+                <div className="min-w-[220px] h-auto flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
                   No products found
                 </div>
               )
