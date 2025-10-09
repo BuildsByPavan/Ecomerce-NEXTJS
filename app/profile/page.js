@@ -21,7 +21,6 @@ export default function ProfilePage() {
   const [selectedFileName, setSelectedFileName] = useState("No file chosen");
   const [loading, setLoading] = useState(false);
 
-  // Load user from localStorage or session
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -41,14 +40,12 @@ export default function ProfilePage() {
         setPreview("");
       }
     }
-  }, [session?.user?.email]); // refresh when session changes
+  }, [session?.user?.email]);
 
-  // Handle input changes
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -60,7 +57,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Remove profile picture
   const handleRemoveImage = () => {
     if (!user.profilePic) return;
 
@@ -98,7 +94,6 @@ export default function ProfilePage() {
                     setSelectedFileName("No file chosen");
                     localStorage.setItem("user", JSON.stringify(data.user));
 
-                    // Update session immediately
                     if (update) {
                       await update({
                         ...session.user,
@@ -106,13 +101,13 @@ export default function ProfilePage() {
                       });
                     }
 
-                    toast.success("Profile picture removed!");
+                    toast.success("Profile picture removed!", { duration: 3000 });
                   } else {
-                    toast.error(data.error || "Failed to remove image");
+                    toast.error(data.error || "Failed to remove image", { duration: 3000 });
                   }
                 } catch (err) {
                   console.error(err);
-                  toast.error("Something went wrong");
+                  toast.error("Something went wrong", { duration: 3000 });
                 } finally {
                   setLoading(false);
                 }
@@ -129,7 +124,6 @@ export default function ProfilePage() {
     );
   };
 
-  // Submit profile updates
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -157,7 +151,6 @@ export default function ProfilePage() {
         setPreview(data.user.profilePic || "");
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Update NextAuth session
         if (update) {
           await update({
             ...session.user,
@@ -167,13 +160,13 @@ export default function ProfilePage() {
           });
         }
 
-        toast.success("Profile updated successfully!");
+        toast.success("Profile updated successfully!", { duration: 3000 });
       } else {
-        toast.error(data.error || "Failed to update profile");
+        toast.error(data.error || "Failed to update profile", { duration: 3000 });
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", { duration: 3000 });
     } finally {
       setLoading(false);
     }
