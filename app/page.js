@@ -31,8 +31,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoadingProducts(true);
       try {
-        setLoadingProducts(true);
         const res = await fetch("/api/products");
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
@@ -89,11 +89,13 @@ export default function Home() {
         return matchCategory && matchSearch;
       });
     });
+
     if (matchedCategory && sliderRefs.current[matchedCategory]) {
       const element = sliderRefs.current[matchedCategory];
       const offset = 120;
       const top = element.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: "smooth" });
+
       setHighlightedCategory(matchedCategory);
       setTimeout(() => setHighlightedCategory(null), 1500);
     }
@@ -111,6 +113,7 @@ export default function Home() {
   return (
     <div className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-4 space-y-16">
       <HomeSection onCategoryClick={handleCategoryClick} selectedCategory={selectedCategory} />
+
       {categories.map((category) => {
         const filteredProducts = products.filter((p) => {
           const matchCategory =
@@ -122,6 +125,7 @@ export default function Home() {
             : true;
           return matchCategory && matchSearch;
         });
+
         return (
           <CategorySlider
             key={category}
@@ -144,6 +148,7 @@ const CategorySlider = React.forwardRef(
   ({ category, products, router, handleAddToCart, highlightText, isHighlighted, loading }, ref) => {
     const sliderRef = useRef(null);
     const [viewAllLoading, setViewAllLoading] = useState(false);
+
     const scroll = (dir) => {
       if (!sliderRef.current) return;
       sliderRef.current.scrollBy({
@@ -151,14 +156,16 @@ const CategorySlider = React.forwardRef(
         behavior: "smooth",
       });
     };
-    const handleViewAll = () => {
+
+    const handleViewAll = async () => {
       setViewAllLoading(true);
       setTimeout(() => {
         router.push(`/category/${encodeURIComponent(category.toLowerCase())}`);
         setViewAllLoading(false);
       }, 500);
     };
-    const skeletonArray = Array.from({ length: 6 });
+
+    const skeletonsCount = Math.floor(window.innerWidth / 240); // adaptive skeletons
 
     return (
       <div
@@ -167,16 +174,7 @@ const CategorySlider = React.forwardRef(
           isHighlighted ? "bg-yellow-100 shadow-lg rounded-2xl scale-[1.02]" : ""
         }`}
       >
-        <h2 className="text-2xl font-bold mb-2">
-          {loading ? (
-            <div className="w-40 h-6 bg-gray-200 rounded-lg relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
-            </div>
-          ) : (
-            category
-          )}
-        </h2>
-
+        <h2 className="text-2xl font-bold mb-2">{category}</h2>
         <div className="relative">
           <button
             onClick={() => scroll("left")}
@@ -187,32 +185,28 @@ const CategorySlider = React.forwardRef(
 
           <div
             ref={sliderRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 sm:px-6"
+            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-6 py-2"
           >
             {loading
-              ? skeletonArray.map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-[220px] h-48 bg-gray-200 rounded-2xl flex flex-col p-3 relative overflow-hidden cursor-pointer hover:scale-105 transition-transform"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
-                    <div className="w-full h-36 bg-gray-300 rounded-md mb-2 relative z-10"></div>
-                    <div className="h-4 bg-gray-300 rounded mb-1 w-3/4 relative z-10"></div>
-                    <div className="h-3 bg-gray-300 rounded mb-1 w-1/2 relative z-10"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/4 mt-2 relative z-10"></div>
-                  </div>
-                ))
-              : products.length === 0
-              ? (
-                <div className="min-w-[220px] h-auto flex items-center justify-center bg-gray-100 rounded-lg text-gray-500">
-                  No products found
-                </div>
-              )
+              ? Array(skeletonsCount)
+                  .fill(0)
+                  .map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="w-[220px] bg-white border border-gray-200 rounded-2xl flex-shrink-0 p-3 animate-pulse"
+                    >
+                      <div className="w-full h-36 bg-gray-200 rounded-md mb-2 shimmer" />
+                      <div className="h-4 bg-gray-200 rounded mb-1 w-3/4 shimmer" />
+                      <div className="h-3 bg-gray-200 rounded mb-1 w-1/2 shimmer" />
+                      <div className="h-4 bg-gray-200 rounded w-1/3 shimmer mt-2" />
+                      <div className="h-8 bg-gray-200 rounded mt-2 shimmer" />
+                    </div>
+                  ))
               : products.slice(0, 10).map((p) => (
                   <div
                     key={p._id}
                     onClick={() => router.push(`/products/${p._id}`)}
-                    className="w-[220px] h-48 bg-white rounded-2xl border border-gray-200 flex-shrink-0 flex flex-col items-center p-3 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
+                    className="w-[220px] bg-white rounded-2xl border border-gray-200 flex-shrink-0 flex flex-col items-center p-3 hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
                   >
                     <div className="relative w-full h-36 mb-2">
                       <Image
@@ -249,16 +243,13 @@ const CategorySlider = React.forwardRef(
           </button>
         </div>
 
-        {!loading && products.length > 0 && (
+        {products.length > 0 && !loading && (
           <div className="flex justify-center mt-8">
             <button
               onClick={handleViewAll}
-              className="flex items-center justify-center gap-2 bg-red-500 cursor-pointer text-white font-medium px-8 py-3 rounded-md hover:bg-red-700 active:scale-95 transition-all shadow-sm relative overflow-hidden"
+              className="flex items-center justify-center gap-2 bg-red-500 cursor-pointer text-white font-medium px-8 py-3 rounded-md hover:bg-red-700 active:scale-95 transition-all shadow-sm"
             >
               {viewAllLoading ? <ClipLoader size={20} color="#fff" /> : "View All Products"}
-              {viewAllLoading && (
-                <div className="absolute inset-0 bg-gradient-to-r from-red-400 via-red-500 to-red-400 opacity-30 animate-shimmer"></div>
-              )}
             </button>
           </div>
         )}
@@ -271,16 +262,31 @@ const CategorySlider = React.forwardRef(
             -ms-overflow-style: none;
             scrollbar-width: none;
           }
-          .animate-shimmer {
-            background-size: 200% 100%;
+          .shimmer {
+            position: relative;
+            overflow: hidden;
+          }
+          .shimmer::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150px;
+            height: 100%;
+            width: 150px;
+            background: linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0) 0%,
+              rgba(255, 255, 255, 0.2) 50%,
+              rgba(255, 255, 255, 0) 100%
+            );
             animation: shimmer 1.5s infinite;
           }
           @keyframes shimmer {
             0% {
-              background-position: -200% 0;
+              transform: translateX(0);
             }
             100% {
-              background-position: 200% 0;
+              transform: translateX(300px);
             }
           }
         `}</style>
@@ -290,3 +296,4 @@ const CategorySlider = React.forwardRef(
 );
 
 CategorySlider.displayName = "CategorySlider";
+
