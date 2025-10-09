@@ -2,9 +2,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import HomeSection from "./components/autoSlider";
-import { useCartStore } from "../store/useCartstore";
+import { useCartStore } from "./store/useCartstore";
 import { useRouter } from "next/navigation";
-import { useFilterStore } from "../store/useFilterStore";
+import { useFilterStore } from "./store/useFilterStore";
 import { toast } from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 
