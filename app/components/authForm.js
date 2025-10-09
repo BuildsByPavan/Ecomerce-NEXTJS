@@ -19,26 +19,22 @@ export default function AuthForm({ type = "login" }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
   const { fetchCart } = useCartStore();
 
   const mergeGuestCart = async () => {
     const guestCart = getGuestCart();
     if (!guestCart.length) return;
-
     try {
       const formattedCart = guestCart.map((item) => ({
         product: item.productId,
         quantity: item.quantity,
       }));
-
       const res = await fetch("/api/cart/merge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: formattedCart }),
         credentials: "include",
       });
-
       if (res.ok) {
         clearGuestCart();
         await fetchCart();
@@ -54,7 +50,6 @@ export default function AuthForm({ type = "login" }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (type === "register") {
         if (password !== confirmPassword) {
@@ -62,38 +57,29 @@ export default function AuthForm({ type = "login" }) {
           setLoading(false);
           return;
         }
-
         const registeredDetails = { username, email, password, confirmPassword };
         await registerAction(registeredDetails);
-
         toast.success("Registration successful! Please login.");
         router.push("/login");
         return;
       }
-
       if (type === "login") {
         const loginDetails = { email, password };
         const result = await loginAction(loginDetails);
-
         if (!result?.success) {
           toast.error("Invalid email or password");
           setLoading(false);
           return;
         }
-
         await mergeGuestCart();
         await fetchCart();
-
         window.dispatchEvent(new Event("sessionUpdated"));
-
         toast.success("Login successful!");
-
         if (result.user?.role === "admin") {
           router.push("/admin");
         } else {
           router.push("/");
         }
-
         router.refresh();
       }
     } catch (err) {
@@ -105,7 +91,7 @@ export default function AuthForm({ type = "login" }) {
   };
 
   return (
-    <div className="flex min-h-screen mx-8">
+    <div className="flex min-h-screen flex-col md:flex-row mx-4 sm:mx-8">
       <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50">
         <Image
           src="/img.svg"
@@ -116,17 +102,29 @@ export default function AuthForm({ type = "login" }) {
         />
       </div>
 
-      <div className="flex flex-1 items-center justify-center p-6 bg-white">
+      <div className="flex flex-1 items-center justify-center p-4 sm:p-6 bg-white">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-md p-8 bg-white shadow-md rounded-xl"
+          className="w-full max-w-md p-6 sm:p-8 bg-white shadow-md rounded-xl"
         >
-          <h2 className=" text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center text-gray-900 whitespace-nowrap tracking-tight" >
-           {type === "login" ? "Exclusive" : "Create an Account"}
+          <h2
+            className="
+              text-2xl
+              sm:text-3xl
+              md:text-4xl
+              font-extrabold
+              mb-6
+              text-center
+              text-gray-900
+              leading-snug
+              tracking-tight
+              break-words
+            "
+          >
+            {type === "login" ? "Exclusive" : "Create an Account"}
           </h2>
 
-    
-            <div className="space-y-4">
+          <div className="space-y-4">
             {type === "register" && (
               <InputField
                 label="Username"
