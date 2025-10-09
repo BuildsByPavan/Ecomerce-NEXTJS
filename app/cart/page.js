@@ -50,7 +50,7 @@ export default function CartPage() {
       }
 
       const data = await res.json();
-      toast.success(data.message || "Order placed successfully!"); // ✅ Toast added
+      toast.success(data.message || "Order placed successfully!"); 
       await fetchCart();
     } catch (err) {
       console.error("Checkout failed:", err);
