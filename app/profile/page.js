@@ -60,7 +60,7 @@ export default function ProfilePage() {
   const handleRemoveImage = () => {
     if (!user.profilePic) return;
 
-    toast(
+    const toastId = toast(
       (t) => (
         <div className="flex flex-col gap-2">
           <p className="text-sm text-gray-800">
